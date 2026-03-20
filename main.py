@@ -41,18 +41,31 @@ class DropshipAutomation:
     
     def __init__(self):
         self.config = {
+            # API Keys
+            "openai_api_key": os.getenv("OPENAI_API_KEY"),
+            "rainforest_api_key": os.getenv("RAINFOREST_API_KEY"),
+            "tiktok_data_api_key": os.getenv("TIKTOK_DATA_API_KEY"),
+            "tiktok_data_api_url": os.getenv("TIKTOK_DATA_API_URL"),
+            
             # TikTok配置
             "tiktok_access_token": os.getenv("TIKTOK_ACCESS_TOKEN"),
             "tiktok_open_id": os.getenv("TIKTOK_OPEN_ID"),
-            
-            # OpenAI配置
-            "openai_api_key": os.getenv("OPENAI_API_KEY"),
+            "tiktok_username": os.getenv("TIKTOK_USERNAME"),
+            "tiktok_password": os.getenv("TIKTOK_PASSWORD"),
             
             # 目录配置
             "output_dir": os.getenv("OUTPUT_DIR", "./output"),
             "temp_dir": os.getenv("TEMP_DIR", "./temp"),
             "logs_dir": "./logs",
+            
+            # 自动化配置
+            "max_products_per_run": int(os.getenv("MAX_PRODUCTS_PER_RUN", "3")),
+            "min_profit_margin": float(os.getenv("MIN_PROFIT_MARGIN", "30")),
+            "schedule_interval_hours": int(os.getenv("SCHEDULE_INTERVAL_HOURS", "6")),
         }
+        
+        # 检查API配置状态
+        self._check_api_status()
         
         # 初始化各模块
         self.tiktok_scraper = TikTokScraper(self.config)
@@ -64,7 +77,6 @@ class DropshipAutomation:
         for dir_path in [self.config["output_dir"], self.config["temp_dir"], self.config["logs_dir"]]:
             Path(dir_path).mkdir(parents=True, exist_ok=True)
         
-        # 运行统计
         self.stats = {
             "runs": 0,
             "products_found": 0,
@@ -72,6 +84,25 @@ class DropshipAutomation:
             "videos_published": 0,
             "errors": []
         }
+    
+    def _check_api_status(self):
+        """检查API配置状态"""
+        logger.info("=" * 60)
+        logger.info("API Configuration Status")
+        logger.info("=" * 60)
+        
+        apis = {
+            "OpenAI (AI Script)": bool(self.config["openai_api_key"]),
+            "Rainforest (Amazon)": bool(self.config["rainforest_api_key"]),
+            "TikTok Data": bool(self.config["tiktok_data_api_key"]),
+            "TikTok API": bool(self.config["tiktok_access_token"]),
+        }
+        
+        for name, configured in apis.items():
+            status = "✅ Configured" if configured else "⚠️  Not configured (using mock)"
+            logger.info(f"  {name}: {status}")
+        
+        logger.info("=" * 60)
     
     def run_single_product(self, keyword: str = None) -> dict:
         """为单个商品运行完整流程"""
@@ -89,7 +120,7 @@ class DropshipAutomation:
         }
         
         try:
-            # Step 1: 获取TikTok热门商品（或直接使用关键词）
+            # Step 1: 获取TikTok热门商品
             if keyword:
                 logger.info(f"Using provided keyword: {keyword}")
                 tiktok_product = TikTokProduct(
@@ -172,7 +203,6 @@ class DropshipAutomation:
             else:
                 logger.error(f"❌ Publish failed: {publish_result.error}")
             
-            # 保存结果
             self._save_run_result(result, tiktok_product.id)
             
         except Exception as e:
@@ -182,8 +212,11 @@ class DropshipAutomation:
         
         return result
     
-    def run_full_pipeline(self, max_products: int = 3) -> dict:
-        """运行完整自动化流程（批量）"""
+    def run_full_pipeline(self, max_products: int = None) -> dict:
+        """运行完整自动化流程"""
+        if max_products is None:
+            max_products = self.config["max_products_per_run"]
+        
         logger.info("=" * 60)
         logger.info("Starting Full Automation Pipeline")
         logger.info(f"Time: {datetime.now()}")
@@ -194,11 +227,7 @@ class DropshipAutomation:
         results = {
             "timestamp": datetime.now().isoformat(),
             "products_processed": [],
-            "summary": {
-                "total": 0,
-                "successful": 0,
-                "failed": 0
-            }
+            "summary": {"total": 0, "successful": 0, "failed": 0}
         }
         
         try:
@@ -284,7 +313,6 @@ class DropshipAutomation:
                         "video_id": publish_result.video_id
                     })
                     
-                    # 避免请求过快
                     time.sleep(2)
                     
                 except Exception as e:
@@ -293,8 +321,6 @@ class DropshipAutomation:
                     continue
             
             results["summary"]["total"] = len(tiktok_products)
-            
-            # 保存运行报告
             self._save_pipeline_report(results)
             
             logger.info("=" * 60)
@@ -314,20 +340,16 @@ class DropshipAutomation:
         """保存单次运行结果"""
         filename = f"run_{product_id}_{int(time.time())}.json"
         filepath = Path(self.config["output_dir"]) / filename
-        
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
-        
         logger.info(f"Result saved to: {filepath}")
     
     def _save_pipeline_report(self, results: dict):
         """保存批量运行报告"""
         filename = f"pipeline_report_{int(time.time())}.json"
         filepath = Path(self.config["output_dir"]) / filename
-        
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
-        
         logger.info(f"Pipeline report saved to: {filepath}")
     
     def print_stats(self):
@@ -350,33 +372,28 @@ def main():
     
     automation = DropshipAutomation()
     
-    # 解析命令行参数
     import argparse
     parser = argparse.ArgumentParser(description='TikTok Dropship Automation')
     parser.add_argument('--single', type=str, help='Process single product by keyword')
-    parser.add_argument('--batch', type=int, default=3, help='Number of products to process in batch mode')
+    parser.add_argument('--batch', type=int, help='Number of products to process')
     parser.add_argument('--schedule', action='store_true', help='Run in scheduled mode')
-    parser.add_argument('--interval', type=int, default=6, help='Hours between runs in schedule mode')
+    parser.add_argument('--interval', type=int, help='Hours between runs')
     args = parser.parse_args()
     
     if args.single:
-        # 单个商品模式
         result = automation.run_single_product(args.single)
         print("\n" + "=" * 60)
         print("RESULT:")
         print(json.dumps(result, indent=2))
         
     elif args.schedule:
-        # 定时任务模式
-        logger.info(f"Schedule mode: running every {args.interval} hours")
+        interval = args.interval or automation.config["schedule_interval_hours"]
+        logger.info(f"Schedule mode: running every {interval} hours")
         
-        schedule.every(args.interval).hours.do(automation.run_full_pipeline, max_products=args.batch)
-        
-        # 立即运行一次
-        automation.run_full_pipeline(max_products=args.batch)
+        schedule.every(interval).hours.do(automation.run_full_pipeline)
+        automation.run_full_pipeline()
         
         logger.info("Scheduler started. Press Ctrl+C to stop.")
-        
         try:
             while True:
                 schedule.run_pending()
@@ -385,8 +402,7 @@ def main():
             logger.info("\nScheduler stopped.")
             automation.print_stats()
     else:
-        # 默认批量模式
-        result = automation.run_full_pipeline(max_products=args.batch)
+        result = automation.run_full_pipeline(args.batch)
         print("\n" + "=" * 60)
         print("PIPELINE RESULT:")
         print(json.dumps(result, indent=2))

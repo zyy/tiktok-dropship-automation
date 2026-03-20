@@ -1,5 +1,5 @@
-# AI视频生成器 - 完整实现
-# 生成带货脚本、配音、合成视频
+# AI视频生成器 - OpenAI真实API版本
+# 使用GPT-4生成脚本，TTS生成配音
 
 import os
 import json
@@ -11,15 +11,14 @@ from dataclasses import dataclass, asdict
 from loguru import logger
 
 try:
-    import openai
+    from openai import OpenAI
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
-    logger.warning("OpenAI not installed, using mock mode")
+    logger.warning("OpenAI not installed")
 
 @dataclass
 class VideoScript:
-    """视频脚本"""
     hook: str
     problem: str
     solution: str
@@ -32,7 +31,6 @@ class VideoScript:
 
 @dataclass
 class GeneratedVideo:
-    """生成的视频"""
     video_path: str
     thumbnail_path: str
     title: str
@@ -55,17 +53,18 @@ class GeneratedVideo:
         }
 
 class AIVideoGenerator:
-    """AI视频生成器 - 使用OpenAI API"""
+    """AI视频生成器 - OpenAI GPT-4 + TTS"""
     
     def __init__(self, config: dict):
         self.config = config
         self.api_key = config.get("openai_api_key")
-        self.mock_mode = not OPENAI_AVAILABLE or not self.api_key
+        self.use_real_api = OPENAI_AVAILABLE and bool(self.api_key)
         
-        if not self.mock_mode:
-            openai.api_key = self.api_key
+        if self.use_real_api:
+            self.client = OpenAI(api_key=self.api_key)
+            logger.info("OpenAI API initialized")
         else:
-            logger.warning("Running in MOCK mode - no actual AI generation")
+            logger.warning("Running in MOCK mode - set OPENAI_API_KEY for real AI generation")
         
         self.output_dir = Path(config.get("output_dir", "./output"))
         self.videos_dir = self.output_dir / "videos"
@@ -73,14 +72,12 @@ class AIVideoGenerator:
         
     def generate_script(self, product_name: str, features: List[str], 
                        price: float = None) -> VideoScript:
-        """生成带货脚本"""
+        """使用GPT-4生成带货脚本"""
         logger.info(f"Generating script for: {product_name}")
         
-        if self.mock_mode:
-            # 模拟脚本生成
+        if not self.use_real_api:
             return self._generate_mock_script(product_name, features, price)
         
-        # 使用GPT-4生成脚本
         features_text = ", ".join(features) if features else "high quality, affordable price"
         price_text = f"priced at ${price}" if price else "affordable"
         
@@ -91,35 +88,36 @@ Features: {features_text}
 Price: {price_text}
 
 Requirements:
-- Hook: Attention-grabbing first 3 seconds
-- Problem: Relatable pain point
-- Solution: How this product solves it
-- CTA: Strong call-to-action with urgency
+- Hook: Attention-grabbing first 3 seconds (use emojis, urgency, or curiosity gap)
+- Problem: Relatable pain point that this product solves
+- Solution: How this product solves it (mention key features)
+- CTA: Strong call-to-action with urgency ("Link in bio", "Limited stock", etc.)
 - Duration: 30-45 seconds
-- Tone: Excited, authentic, FOMO-inducing
+- Tone: Excited, authentic, FOMO-inducing, like a friend recommending
+- Language: English (US market)
 
-Output format (JSON):
+Output format (JSON only):
 {{
     "hook": "...",
     "problem": "...",
     "solution": "...",
     "cta": "...",
     "duration": 40,
-    "voiceover_text": "full script for voiceover"
+    "voiceover_text": "full script for voiceover (combine all parts naturally)"
 }}"""
         
         try:
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are an expert TikTok dropshipping content creator."},
+                    {"role": "system", "content": "You are an expert TikTok dropshipping content creator who knows how to make viral videos."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.8
+                temperature=0.8,
+                response_format={"type": "json_object"}
             )
             
             content = response.choices[0].message.content
-            # 解析JSON
             script_data = json.loads(content)
             
             return VideoScript(
@@ -141,27 +139,30 @@ Output format (JSON):
         price_text = f"${price:.2f}" if price else "under $30"
         
         hooks = [
-            f"Stop scrolling! You need to see this {product_name}!",
-            f"I can't believe this {product_name} is only {price_text}!",
-            f"This {product_name} just changed my life!",
-            f"POV: You finally found the perfect {product_name}",
+            f"Stop scrolling! You need to see this {product_name}! 🔥",
+            f"I can't believe this {product_name} is only {price_text}! 😱",
+            f"This {product_name} just changed my life! ✨",
+            f"POV: You finally found the perfect {product_name} 🎯",
+            f"Wait for it... This {product_name} is INSANE! 🤯",
         ]
         
         problems = [
             "Tired of overpriced products that don't work?",
             "Sick of wasting money on cheap knockoffs?",
             "Struggling to find a good quality option?",
+            "Frustrated with products that break after a week?",
         ]
         
         solutions = [
             f"This {product_name} is game-changing!",
             f"Finally found the perfect solution - this {product_name}!",
+            f"This {product_name} solves everything!",
         ]
         
         ctas = [
-            f"Link in bio! Only {price_text} but selling out fast!",
-            "Grab yours before they're gone! Link in bio!",
-            "Don't miss out - link in bio! Limited stock!",
+            f"Link in bio! Only {price_text} but selling out fast! ⚡",
+            "Grab yours before they're gone! Link in bio! 🏃‍♀️",
+            "Don't miss out - link in bio! Limited stock! ⏰",
         ]
         
         hook = random.choice(hooks)
@@ -181,26 +182,25 @@ Output format (JSON):
         )
     
     def generate_voiceover(self, script: VideoScript, output_name: str = None) -> str:
-        """生成配音"""
-        logger.info("Generating voiceover...")
+        """使用OpenAI TTS生成配音"""
+        logger.info("Generating voiceover with OpenAI TTS...")
         
         if output_name is None:
             output_name = f"voiceover_{int(time.time())}.mp3"
         
         output_path = self.videos_dir / output_name
         
-        if self.mock_mode:
-            # 模拟生成配音文件
+        if not self.use_real_api:
             output_path.touch()
             logger.info(f"Mock voiceover saved: {output_path}")
             return str(output_path)
         
-        # 使用OpenAI TTS
         try:
-            response = openai.audio.speech.create(
+            response = self.client.audio.speech.create(
                 model="tts-1",
                 voice="alloy",  # alloy, echo, fable, onyx, nova, shimmer
-                input=script.voiceover_text
+                input=script.voiceover_text,
+                speed=1.1  # 稍微加快语速，更适合TikTok
             )
             
             response.stream_to_file(output_path)
@@ -216,7 +216,6 @@ Output format (JSON):
         """生成字幕时间轴"""
         logger.info("Generating captions...")
         
-        # 简单的时间轴分配
         parts = [
             {"text": script.hook, "start": 0, "end": 5},
             {"text": script.problem, "start": 5, "end": 15},
@@ -240,20 +239,14 @@ Output format (JSON):
         video_path = self.videos_dir / output_name
         thumbnail_path = self.videos_dir / f"thumb_{int(time.time())}.jpg"
         
-        if self.mock_mode:
-            # 模拟生成视频文件
+        # 视频合成（需要MoviePy）
+        try:
+            self._compose_video(product_images, voiceover_path, script, video_path)
+        except Exception as e:
+            logger.error(f"Video composition failed: {e}")
             video_path.touch()
             thumbnail_path.touch()
-            logger.info(f"Mock video saved: {video_path}")
-        else:
-            # 实际视频合成（使用MoviePy或其他工具）
-            try:
-                self._compose_video(product_images, voiceover_path, script, video_path)
-            except Exception as e:
-                logger.error(f"Failed to compose video: {e}")
-                video_path.touch()
         
-        # 生成标题和描述
         title = self._generate_title(product_name, script)
         description = self._generate_description(script)
         hashtags = self._generate_hashtags(product_name)
@@ -271,33 +264,36 @@ Output format (JSON):
     
     def _compose_video(self, images: List[str], audio_path: str, 
                       script: VideoScript, output_path: Path):
-        """合成视频（需要MoviePy）"""
+        """合成视频（使用MoviePy）"""
         try:
-            from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+            from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips, CompositeVideoClip, TextClip
             
-            # 创建图片片段
             clips = []
             duration_per_image = script.duration / max(len(images), 1)
             
             for img_path in images:
                 if os.path.exists(img_path):
                     clip = ImageClip(img_path, duration=duration_per_image)
+                    # 添加缩放动画效果
+                    clip = clip.resize(lambda t: 1 + 0.1 * t / duration_per_image)
                     clips.append(clip)
             
             if clips:
                 video = concatenate_videoclips(clips, method="compose")
                 
-                # 添加音频
                 if os.path.exists(audio_path):
                     audio = AudioFileClip(audio_path)
+                    # 确保视频和音频时长一致
+                    video = video.set_duration(min(video.duration, audio.duration))
                     video = video.set_audio(audio)
                 
-                # 导出
-                video.write_videofile(str(output_path), fps=24, codec='libx264')
+                video.write_videofile(str(output_path), fps=30, codec='libx264', audio_codec='aac')
                 video.close()
-            
+            else:
+                output_path.touch()
+                
         except ImportError:
-            logger.warning("MoviePy not installed, skipping video composition")
+            logger.warning("MoviePy not installed, creating placeholder video")
             output_path.touch()
     
     def _generate_title(self, product_name: str, script: VideoScript) -> str:
@@ -310,15 +306,14 @@ Output format (JSON):
     
     def _generate_hashtags(self, product_name: str) -> List[str]:
         """生成标签"""
-        base_tags = ["#tiktokmademebuyit", "#amazonfinds", "#musthave", "#viral"]
+        base_tags = ["#tiktokmademebuyit", "#amazonfinds", "#musthave", "#viral", "#shorts"]
         
-        # 根据产品名添加相关标签
         product_words = product_name.lower().split()
         for word in product_words[:3]:
             if len(word) > 3:
                 base_tags.append(f"#{word}")
         
-        return base_tags[:8]  # 最多8个标签
+        return base_tags[:8]
     
     def run(self, product_name: str, product_images: List[str], 
             product_price: float = None, product_features: List[str] = None) -> GeneratedVideo:
@@ -330,14 +325,11 @@ Output format (JSON):
         if product_features is None:
             product_features = ["high quality", "affordable"]
         
-        # 生成脚本
         script = self.generate_script(product_name, product_features, product_price)
-        logger.info(f"Script generated: {script.hook}")
+        logger.info(f"Script: {script.hook}")
         
-        # 生成配音
         voiceover_path = self.generate_voiceover(script)
         
-        # 生成视频
         video = self.generate_video(
             product_images=product_images,
             voiceover_path=voiceover_path,
@@ -348,30 +340,5 @@ Output format (JSON):
         logger.info("Video generation completed!")
         logger.info(f"  Title: {video.title}")
         logger.info(f"  Duration: {video.duration}s")
-        logger.info(f"  Hashtags: {', '.join(video.hashtags[:3])}...")
         
         return video
-
-
-if __name__ == "__main__":
-    import random
-    
-    config = {
-        "openai_api_key": os.getenv("OPENAI_API_KEY"),
-        "output_dir": "./output"
-    }
-    
-    generator = AIVideoGenerator(config)
-    
-    # 测试生成
-    video = generator.run(
-        product_name="Wireless Bluetooth Earbuds",
-        product_images=["image1.jpg", "image2.jpg"],
-        product_price=24.99,
-        product_features=["Bluetooth 5.3", "30h battery", "IPX7 waterproof"]
-    )
-    
-    print(f"\nGenerated video:")
-    print(f"  Title: {video.title}")
-    print(f"  Path: {video.video_path}")
-    print(f"  Script: {video.script.voiceover_text}")
