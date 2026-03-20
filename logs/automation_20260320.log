@@ -1,0 +1,84 @@
+2026-03-20 22:59:26.746 | INFO     | __main__:main:347 - ============================================================
+2026-03-20 22:59:26.746 | INFO     | __main__:main:348 - TikTok Dropship Automation System
+2026-03-20 22:59:26.746 | INFO     | __main__:main:349 - ============================================================
+2026-03-20 22:59:26.747 | WARNING  | ai_video_generator.generator:__init__:67 - Running in MOCK mode - no actual AI generation
+2026-03-20 22:59:26.748 | INFO     | __main__:run_single_product:78 - ============================================================
+2026-03-20 22:59:26.748 | INFO     | __main__:run_single_product:79 - Running Single Product Pipeline
+2026-03-20 22:59:26.748 | INFO     | __main__:run_single_product:80 - ============================================================
+2026-03-20 22:59:26.748 | INFO     | __main__:run_single_product:94 - Using provided keyword: Wireless Bluetooth Earbuds
+2026-03-20 22:59:26.749 | INFO     | __main__:run_single_product:117 - Selected product: Wireless Bluetooth Earbuds
+2026-03-20 22:59:26.749 | INFO     | __main__:run_single_product:120 - Matching Amazon products...
+2026-03-20 22:59:26.749 | INFO     | amazon_scraper.scraper:find_similar_products:260 - Finding Amazon products for: Wireless Bluetooth Earbuds
+2026-03-20 22:59:26.749 | INFO     | amazon_scraper.scraper:search_products:53 - Searching Amazon for: Wireless Bluetooth Earbuds
+2026-03-20 22:59:26.749 | ERROR    | __main__:run_single_product:179 - Pipeline error: name 'random' is not defined
+2026-03-20 22:59:50.394 | INFO     | __main__:main:347 - ============================================================
+2026-03-20 22:59:50.394 | INFO     | __main__:main:348 - TikTok Dropship Automation System
+2026-03-20 22:59:50.394 | INFO     | __main__:main:349 - ============================================================
+2026-03-20 22:59:50.394 | WARNING  | ai_video_generator.generator:__init__:67 - Running in MOCK mode - no actual AI generation
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:78 - ============================================================
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:79 - Running Single Product Pipeline
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:80 - ============================================================
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:94 - Using provided keyword: Wireless Bluetooth Earbuds
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:117 - Selected product: Wireless Bluetooth Earbuds
+2026-03-20 22:59:50.395 | INFO     | __main__:run_single_product:120 - Matching Amazon products...
+2026-03-20 22:59:50.395 | INFO     | amazon_scraper.scraper:find_similar_products:261 - Finding Amazon products for: Wireless Bluetooth Earbuds
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:search_products:54 - Searching Amazon for: Wireless Bluetooth Earbuds
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:find_similar_products:272 - Found 2 matching products
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:find_similar_products:274 -   - Bluetooth Earbuds with Noise Cancelling, Wireless ... ($35.99)
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:find_similar_products:274 -   - Wireless Earbuds Bluetooth 5.3 Headphones with Cha... ($24.99)
+2026-03-20 22:59:50.396 | INFO     | __main__:run_single_product:130 - Found Amazon product: Bluetooth Earbuds with Noise Cancelling, Wireless ...
+2026-03-20 22:59:50.396 | INFO     | __main__:run_single_product:136 - Profit margin: -139.9% ($-20.99)
+2026-03-20 22:59:50.396 | INFO     | __main__:run_single_product:139 - Downloading product images...
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:download_images:295 - Downloading images for: Bluetooth Earbuds with Noise Cancelling,...
+2026-03-20 22:59:50.396 | INFO     | amazon_scraper.scraper:download_images:314 -   Downloaded: B09V3KXJPB_main.jpg
+2026-03-20 22:59:50.396 | INFO     | __main__:run_single_product:141 - Downloaded 1 images
+2026-03-20 22:59:50.396 | INFO     | __main__:run_single_product:144 - Generating AI video...
+2026-03-20 22:59:50.396 | INFO     | ai_video_generator.generator:run:325 - ==================================================
+2026-03-20 22:59:50.396 | INFO     | ai_video_generator.generator:run:326 - Starting AI Video Generation
+2026-03-20 22:59:50.396 | INFO     | ai_video_generator.generator:run:327 - ==================================================
+2026-03-20 22:59:50.396 | INFO     | ai_video_generator.generator:generate_script:76 - Generating script for: Wireless Bluetooth Earbuds
+2026-03-20 22:59:50.396 | ERROR    | __main__:run_single_product:179 - Pipeline error: name 'random' is not defined
+2026-03-20 23:00:22.700 | INFO     | __main__:main:347 - ============================================================
+2026-03-20 23:00:22.700 | INFO     | __main__:main:348 - TikTok Dropship Automation System
+2026-03-20 23:00:22.700 | INFO     | __main__:main:349 - ============================================================
+2026-03-20 23:00:22.700 | WARNING  | ai_video_generator.generator:__init__:68 - Running in MOCK mode - no actual AI generation
+2026-03-20 23:00:22.701 | INFO     | __main__:run_single_product:78 - ============================================================
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:79 - Running Single Product Pipeline
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:80 - ============================================================
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:94 - Using provided keyword: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:117 - Selected product: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:120 - Matching Amazon products...
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:find_similar_products:261 - Finding Amazon products for: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:search_products:54 - Searching Amazon for: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:find_similar_products:272 - Found 2 matching products
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:find_similar_products:274 -   - Bluetooth Earbuds with Noise Cancelling, Wireless ... ($35.99)
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:find_similar_products:274 -   - Wireless Earbuds Bluetooth 5.3 Headphones with Cha... ($24.99)
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:130 - Found Amazon product: Bluetooth Earbuds with Noise Cancelling, Wireless ...
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:136 - Profit margin: -139.9% ($-20.99)
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:139 - Downloading product images...
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:download_images:295 - Downloading images for: Bluetooth Earbuds with Noise Cancelling,...
+2026-03-20 23:00:22.702 | INFO     | amazon_scraper.scraper:download_images:314 -   Downloaded: B09V3KXJPB_main.jpg
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:141 - Downloaded 1 images
+2026-03-20 23:00:22.702 | INFO     | __main__:run_single_product:144 - Generating AI video...
+2026-03-20 23:00:22.702 | INFO     | ai_video_generator.generator:run:326 - ==================================================
+2026-03-20 23:00:22.702 | INFO     | ai_video_generator.generator:run:327 - Starting AI Video Generation
+2026-03-20 23:00:22.702 | INFO     | ai_video_generator.generator:run:328 - ==================================================
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:generate_script:77 - Generating script for: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:run:335 - Script generated: Stop scrolling! You need to see this Wireless Bluetooth Earbuds!
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:generate_voiceover:185 - Generating voiceover...
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:generate_voiceover:195 - Mock voiceover saved: output/videos/voiceover_1774018822.mp3
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:generate_video:235 - Generating video for: Wireless Bluetooth Earbuds
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:generate_video:247 - Mock video saved: output/videos/video_1774018822.mp4
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:run:348 - Video generation completed!
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:run:349 -   Title: Stop scrolling! You need to see this Wireless Bluetooth Earbuds! 🔥 #shorts
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:run:350 -   Duration: 40s
+2026-03-20 23:00:22.703 | INFO     | ai_video_generator.generator:run:351 -   Hashtags: #tiktokmademebuyit, #amazonfinds, #musthave...
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:153 - Video generated: Stop scrolling! You need to see this Wireless Bluetooth Earbuds! 🔥 #shorts
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:154 - Script: Stop scrolling! You need to see this Wireless Bluetooth Earbuds! Sick of wasting...
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:157 - Publishing to TikTok...
+2026-03-20 23:00:22.703 | INFO     | tiktok_publisher.publisher:upload_video:59 - Uploading video: Stop scrolling! You need to see this Wireless Blue...
+2026-03-20 23:00:22.703 | WARNING  | tiktok_publisher.publisher:_mock_upload:70 - Running in MOCK mode - not actually uploading to TikTok
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:169 - ✅ Published successfully!
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:170 -    Video ID: mock_1774018822_3667
+2026-03-20 23:00:22.703 | INFO     | __main__:run_single_product:171 -    URL: https://tiktok.com/@user/video/mock_1774018822_3667
+2026-03-20 23:00:22.704 | INFO     | __main__:_save_run_result:321 - Result saved to: output/run_manual_1774018822_1774018822.json

@@ -1,0 +1,78 @@
+{
+  "success": true,
+  "tiktok_product": {
+    "id": "manual_1774018822",
+    "name": "Wireless Bluetooth Earbuds",
+    "category": "General",
+    "views": 1000000,
+    "likes": 50000,
+    "shares": 5000,
+    "video_url": "",
+    "product_url": null,
+    "trending_score": 8.5,
+    "tags": [
+      "#viral",
+      "#trending"
+    ],
+    "thumbnail": null,
+    "price_range": "$15-30"
+  },
+  "amazon_product": {
+    "asin": "B09V3KXJPB",
+    "title": "Bluetooth Earbuds with Noise Cancelling, Wireless Earphones",
+    "price": 35.99,
+    "currency": "USD",
+    "rating": 4.5,
+    "reviews_count": 28900,
+    "main_image": "https://m.media-amazon.com/images/I/71Zz8mV0xXL._AC_SL1500_.jpg",
+    "images": [
+      "https://m.media-amazon.com/images/I/71Zz8mV0xXL._AC_SL1500_.jpg"
+    ],
+    "video_url": null,
+    "url": "https://www.amazon.com/dp/B09V3KXJPB",
+    "category": "Electronics",
+    "is_prime": true,
+    "bsr_rank": 8351,
+    "brand": "TechBeat",
+    "description": null,
+    "features": [
+      "Active Noise Cancelling",
+      "40h battery",
+      "Wireless charging",
+      "Transparency mode"
+    ]
+  },
+  "video": {
+    "video_path": "output/videos/video_1774018822.mp4",
+    "thumbnail_path": "output/videos/thumb_1774018822.jpg",
+    "title": "Stop scrolling! You need to see this Wireless Bluetooth Earbuds! 🔥 #shorts",
+    "description": "Sick of wasting money on cheap knockoffs?\n\nThis Wireless Bluetooth Earbuds is game-changing!\n\nDon't miss out - link in bio! Limited stock!\n\n#tiktokmademebuyit #amazonfinds #musthave",
+    "hashtags": [
+      "#tiktokmademebuyit",
+      "#amazonfinds",
+      "#musthave",
+      "#viral",
+      "#wireless",
+      "#bluetooth",
+      "#earbuds"
+    ],
+    "script": {
+      "hook": "Stop scrolling! You need to see this Wireless Bluetooth Earbuds!",
+      "problem": "Sick of wasting money on cheap knockoffs?",
+      "solution": "This Wireless Bluetooth Earbuds is game-changing!",
+      "cta": "Don't miss out - link in bio! Limited stock!",
+      "duration": 40,
+      "voiceover_text": "Stop scrolling! You need to see this Wireless Bluetooth Earbuds! Sick of wasting money on cheap knockoffs? This Wireless Bluetooth Earbuds is game-changing! Don't miss out - link in bio! Limited stock!"
+    },
+    "product_name": "Wireless Bluetooth Earbuds",
+    "duration": 40
+  },
+  "publish_result": {
+    "success": true,
+    "video_id": "mock_1774018822_3667",
+    "url": "https://tiktok.com/@user/video/mock_1774018822_3667",
+    "error": null,
+    "published_at": "2026-03-20T23:00:22.703834"
+  },
+  "error": null
+}
