@@ -1,40 +1,99 @@
-# TikTok 无货源带货自动化
-
-name: Automation Pipeline
+name: TikTok Dropship Automation
 
 on:
+  # 定时运行：每天北京时间 20:00（美区早上 8:00）
   schedule:
-    # 每天北京时间20:00运行（美区早上8点）
     - cron: '0 12 * * *'
+  
+  # 手动触发
   workflow_dispatch:
+    inputs:
+      mode:
+        description: '运行模式'
+        required: true
+        default: 'batch'
+        type: choice
+        options:
+          - batch
+          - single
+      keyword:
+        description: '单个商品关键词（single模式）'
+        required: false
+        default: ''
+      batch_size:
+        description: '批量处理数量（batch模式）'
+        required: false
+        default: '3'
+
+env:
+  PYTHON_VERSION: '3.11'
 
 jobs:
-  run-automation:
+  automation:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
     
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        playwright install
     
-    - name: Run automation
+    - name: Create directories
+      run: |
+        mkdir -p output/videos
+        mkdir -p temp/amazon_images
+        mkdir -p logs
+    
+    - name: Run automation (batch mode)
+      if: github.event.inputs.mode != 'single'
       env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
         TIKTOK_OPEN_ID: ${{ secrets.TIKTOK_OPEN_ID }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: python main.py
+        OUTPUT_DIR: ./output
+        TEMP_DIR: ./temp
+      run: |
+        python main.py --batch ${{ github.event.inputs.batch_size || '3' }}
     
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+    - name: Run automation (single mode)
+      if: github.event.inputs.mode == 'single'
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        TIKTOK_ACCESS_TOKEN: ${{ secrets.TIKTOK_ACCESS_TOKEN }}
+        TIKTOK_OPEN_ID: ${{ secrets.TIKTOK_OPEN_ID }}
+        OUTPUT_DIR: ./output
+        TEMP_DIR: ./temp
+      run: |
+        python main.py --single "${{ github.event.inputs.keyword }}"
+    
+    - name: Upload generated videos
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
-        name: generated-videos
+        name: generated-videos-${{ github.run_id }}
         path: output/
+        retention-days: 7
+    
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: logs-${{ github.run_id }}
+        path: logs/
+        retention-days: 7
+    
+    - name: Send notification on failure
+      if: failure()
+      run: |
+        echo "Automation failed! Check the logs for details."
+        # 可以添加通知逻辑，如发送邮件、Slack消息等
