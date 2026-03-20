@@ -1,0 +1,30 @@
+# 依赖安装
+# 基础依赖
+python-dotenv>=1.0.0
+requests>=2.31.0
+pydantic>=2.5.0
+loguru>=0.7.0
+schedule>=1.2.0
+
+# 爬虫相关
+selenium>=4.15.0
+playwright>=1.40.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# TikTok API
+tiktok-api>=6.2.0
+
+# AI生成
+openai>=1.6.0
+
+# 图片/视频处理
+Pillow>=10.1.0
+opencv-python>=4.8.0
+moviepy>=1.0.3
+
+# 数据库
+sqlite3
+
+# 其他
+python-telegram-bot>=20.7
